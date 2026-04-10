@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRM 실행안 대시보드</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#F5F4F0; --surface:#FFFFFF; --surface2:#F9F8F5;
+  --border:#E8E6E0; --border2:#D4D1C8;
+  --text:#1A1916; --text2:#6B6860; --text3:#A09D96;
+  --accent:#1A1916;
+  --purple:#6B5CE7; --purple-bg:#F0EEFF;
+  --teal:#0E8A6E;   --teal-bg:#E4F5F0;
+  --amber:#C4780A;  --amber-bg:#FFF4E0;
+  --coral:#D94F2B;  --coral-bg:#FEF0EB;
+  --blue:#1E6FBB;   --blue-bg:#EBF3FC;
+  --green:#2D7A3A;  --green-bg:#E8F5EB;
+  --radius:12px; --radius-sm:8px;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,.08),0 2px 4px rgba(0,0,0,.04);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard','Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5}
+
+/* ── LAYOUT ── */
+.layout{display:flex;height:100vh;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.sidebar{width:220px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:24px 0}
+.logo{padding:0 20px 24px;border-bottom:1px solid var(--border);margin-bottom:16px}
+.logo-text{font-size:15px;font-weight:700;letter-spacing:-.3px}
+.logo-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.nav-section{padding:0 12px;margin-bottom:8px}
+.nav-label{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;padding:0 8px;margin-bottom:4px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;color:var(--text2);font-weight:500;transition:all .15s}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:var(--accent);color:#fff}
+.nav-icon{width:16px;text-align:center;font-size:14px}
+.sidebar-footer{margin-top:auto;padding:16px 20px 0;border-top:1px solid var(--border)}
+.month-summary{font-size:11px;color:var(--text3);margin-bottom:8px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+.mini-stat{display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px}
+.mini-stat-label{color:var(--text2)}
+.mini-stat-val{font-weight:600}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar-left{display:flex;align-items:center;gap:16px}
+.page-title{font-size:15px;font-weight:700}
+.month-nav{display:flex;align-items:center;gap:8px}
+.month-btn{width:28px;height:28px;border:1px solid var(--border2);border-radius:6px;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--text2);transition:all .15s}
+.month-btn:hover{background:var(--bg)}
+.month-current{font-size:14px;font-weight:600;min-width:80px;text-align:center}
+.today-btn{padding:5px 12px;border:1px solid var(--border2);border-radius:6px;background:none;cursor:pointer;font-size:12px;color:var(--text2);font-weight:500}
+.today-btn:hover{background:var(--bg)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.db-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--surface2);border:1px solid var(--border);color:var(--text2);cursor:default}
+.add-btn{padding:7px 16px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer}
+.add-btn:hover{opacity:.85}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;padding:24px 28px}
+
+/* ── STATS ── */
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+.stat-label{font-size:11px;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+.stat-value{font-size:22px;font-weight:700;letter-spacing:-.5px}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:3px}
+
+/* ── CALENDAR ── */
+.cal-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.cal-head{display:grid;grid-template-columns:repeat(7,1fr);background:var(--surface2);border-bottom:1px solid var(--border)}
+.cal-head-cell{padding:10px;text-align:center;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+.cal-head-cell:first-child{color:var(--coral)}
+.cal-head-cell:last-child{color:var(--blue)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+.cal-cell{border-right:1px solid var(--border);border-bottom:1px solid var(--border);min-height:110px;padding:8px;cursor:pointer;transition:background .1s;vertical-align:top}
+.cal-cell:nth-child(7n){border-right:none}
+.cal-cell:hover{background:var(--surface2)}
+.cal-cell.other-month{background:var(--bg);opacity:.6}
+.cal-cell.today{background:#FFFDF7}
+.day-num{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:4px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:50%}
+.cal-cell.today .day-num{background:var(--accent);color:#fff}
+.sun .day-num{color:var(--coral)}
+.sat .day-num{color:var(--blue)}
+.event-bar{font-size:10px;padding:2px 7px;border-radius:4px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;font-weight:500;max-width:100%}
+.ev-purple{background:var(--purple-bg);color:#4B39C4}
+.ev-teal{background:var(--teal-bg);color:var(--teal)}
+.ev-amber{background:var(--amber-bg);color:var(--amber)}
+.ev-coral{background:var(--coral-bg);color:var(--coral)}
+.ev-blue{background:var(--blue-bg);color:var(--blue)}
+.ev-green{background:var(--green-bg);color:var(--green)}
+.more-label{font-size:10px;color:var(--text3);padding:1px 4px}
+
+/* ── LIST ── */
+.list-view{display:none}
+.list-filters{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.filter-chip{padding:5px 14px;border:1px solid var(--border2);border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;color:var(--text2);background:var(--surface);transition:all .15s}
+.filter-chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.item-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:8px;cursor:pointer;box-shadow:var(--shadow);transition:box-shadow .15s,border-color .15s}
+.item-row:hover{box-shadow:var(--shadow-md);border-color:var(--border2)}
+.item-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.item-name{font-size:14px;font-weight:600;flex:1}
+.status-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+.badge-plan{background:var(--purple-bg);color:#4B39C4}
+.badge-ready{background:var(--amber-bg);color:var(--amber)}
+.badge-live{background:var(--green-bg);color:var(--green)}
+.badge-done{background:var(--teal-bg);color:var(--teal)}
+.item-meta{display:flex;gap:18px;flex-wrap:wrap}
+.meta-chip{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:4px}
+.meta-icon{font-size:13px}
+
+/* ── RESULT ── */
+.result-view{display:none}
+.result-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.result-section-title{font-size:13px;font-weight:700;margin-bottom:12px}
+.result-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:10px;box-shadow:var(--shadow)}
+.result-card-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.result-card-name{font-size:13px;font-weight:600;flex:1}
+.result-metrics{display:flex;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.metric-cell{flex:1;padding:10px 8px;text-align:center;border-right:1px solid var(--border)}
+.metric-cell:last-child{border-right:none}
+.metric-label{font-size:10px;color:var(--text3);margin-bottom:4px;font-weight:500}
+.metric-val{font-size:16px;font-weight:700}
+.insight-box{background:var(--surface2);border-radius:var(--radius-sm);padding:10px 12px;margin-top:10px;font-size:12px;color:var(--text2);line-height:1.6;border-left:3px solid var(--purple)}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--radius);width:100%;max-width:580px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surface);z-index:1}
+.modal-title{font-size:15px;font-weight:700}
+.modal-close{width:28px;height:28px;border:none;background:var(--bg);border-radius:6px;cursor:pointer;font-size:16px;color:var(--text2);display:flex;align-items:center;justify-content:center}
+.modal-body{padding:20px 24px}
+.modal-sec{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin:16px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.modal-sec:first-child{margin-top:0}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ff{display:flex;flex-direction:column;gap:5px}
+.ff.full{grid-column:1/-1}
+.fl{font-size:11px;font-weight:600;color:var(--text2)}
+.ff input,.ff select,.ff textarea{padding:8px 10px;border:1px solid var(--border2);border-radius:var(--radius-sm);font-size:13px;font-family:inherit;color:var(--text);background:var(--surface);outline:none;transition:border-color .15s}
+.ff input:focus,.ff select:focus,.ff textarea:focus{border-color:var(--accent)}
+.ff textarea{resize:vertical;min-height:72px;line-height:1.5}
+.modal-footer{padding:14px 24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;background:var(--surface)}
+.del-btn{padding:7px 14px;border:1px solid #FFCDD2;background:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;color:var(--coral);cursor:pointer}
+.del-btn:hover{background:var(--coral-bg)}
+.save-btn{padding:8px 20px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer}
+.cancel-btn{padding:8px 14px;border:1px solid var(--border2);background:none;border-radius:var(--radius-sm);font-size:13px;color:var(--text2);cursor:pointer;margin-right:8px}
+
+.empty{text-align:center;padding:48px 20px;color:var(--text3);font-size:13px}
+.empty-icon{font-size:32px;margin-bottom:8px}
+
+/* ── LOADING ── */
+#loading-overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,.75);z-index:9999;align-items:center;justify-content:center;gap:10px;font-size:13px;color:var(--text2);font-weight:500}
+.spinner{width:18px;height:18px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+</style>
+</head>
+<body>
+
+<div id="loading-overlay"><div class="spinner"></div><span>데이터 불러오는 중...</span></div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-text">CRM Hub</div>
+      <div class="logo-sub">실행안 운영 시스템</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">뷰</div>
+      <div class="nav-item active" onclick="switchNav(this,'calendar')"><span class="nav-icon">📅</span> 캘린더</div>
+      <div class="nav-item" onclick="switchNav(this,'list')"><span class="nav-icon">📋</span> 실행안 목록</div>
+      <div class="nav-item" onclick="switchNav(this,'result')"><span class="nav-icon">📊</span> 결과 &amp; 인사이트</div>
+    </div>
+    <div class="nav-section" style="margin-top:8px">
+      <div class="nav-label">필터</div>
+      <div class="nav-item" onclick="filterNav('계획')"><span class="nav-icon">🟣</span> 계획</div>
+      <div class="nav-item" onclick="filterNav('준비중')"><span class="nav-icon">🟡</span> 준비중</div>
+      <div class="nav-item" onclick="filterNav('진행중')"><span class="nav-icon">🟢</span> 진행중</div>
+      <div class="nav-item" onclick="filterNav('완료')"><span class="nav-icon">🔵</span> 완료</div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="month-summary" id="sidebar-month">이번 달 현황</div>
+      <div class="mini-stat"><span class="mini-stat-label">전체 캠페인</span><span class="mini-stat-val" id="sb-total">0</span></div>
+      <div class="mini-stat"><span class="mini-stat-label">진행중</span><span class="mini-stat-val" id="sb-live">0</span></div>
+      <div class="mini-stat"><span class="mini-stat-label">완료</span><span class="mini-stat-val" id="sb-done">0</span></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="page-title" id="page-title">캘린더</div>
+        <div class="month-nav">
+          <button class="month-btn" onclick="changeMonth(-1)">&#8249;</button>
+          <span class="month-current" id="month-label"></span>
+          <button class="month-btn" onclick="changeMonth(1)">&#8250;</button>
+          <button class="today-btn" onclick="goToday()">오늘</button>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span class="db-badge" id="db-badge">💾 로컬 저장</span>
+        <button class="add-btn" onclick="openModal()">+ 실행안 추가</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="stats-row" id="stats-row"></div>
+
+      <!-- CALENDAR -->
+      <div id="view-calendar">
+        <div class="cal-wrap">
+          <div class="cal-head">
+            <div class="cal-head-cell">일</div><div class="cal-head-cell">월</div>
+            <div class="cal-head-cell">화</div><div class="cal-head-cell">수</div>
+            <div class="cal-head-cell">목</div><div class="cal-head-cell">금</div>
+            <div class="cal-head-cell">토</div>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+        </div>
+      </div>
+
+      <!-- LIST -->
+      <div id="view-list" class="list-view">
+        <div class="list-filters">
+          <div class="filter-chip active" onclick="setFilter('all',this)">전체</div>
+          <div class="filter-chip" onclick="setFilter('계획',this)">🟣 계획</div>
+          <div class="filter-chip" onclick="setFilter('준비중',this)">🟡 준비중</div>
+          <div class="filter-chip" onclick="setFilter('진행중',this)">🟢 진행중</div>
+          <div class="filter-chip" onclick="setFilter('완료',this)">✅ 완료</div>
+        </div>
+        <div id="list-container"></div>
+      </div>
+
+      <!-- RESULT -->
+      <div id="view-result" class="result-view">
+        <div class="result-grid" id="result-summary"></div>
+        <div class="result-section-title">캠페인별 성과</div>
+        <div id="result-cards"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title-text">실행안 추가</div>
+      <button class="modal-close" onclick="closeModal()">&#10005;</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-sec">기본 정보</div>
+      <div class="form-grid">
+        <div class="ff full"><label class="fl">캠페인명 *</label><input id="f-name" type="text" placeholder="예) 이탈 고객 윈백 캠페인 5월"></div>
+        <div class="ff">
+          <label class="fl">세그먼트</label>
+          <select id="f-seg" onchange="toggleSegCustom(this.value)">
+            <option value="">선택하세요</option>
+            <option>VIP 고객</option>
+            <option>이탈 위험 고객</option>
+            <option>신규 고객</option>
+            <option>휴면 고객 (90일+)</option>
+            <option>재구매 유도</option>
+            <option>생애주기 전환</option>
+            <option>전체 고객</option>
+            <option value="__custom__">직접 입력</option>
+          </select>
+          <input id="f-seg-custom" type="text" placeholder="세그먼트명 직접 입력" style="display:none;margin-top:6px">
+        </div>
+        <div class="ff">
+          <label class="fl">채널</label>
+          <select id="f-ch">
+            <option value="">선택하세요</option>
+            <option>이메일</option><option>카카오톡</option><option>SMS</option>
+            <option>앱 푸시</option><option>카카오 친구톡</option>
+            <option>멀티채널 (이메일+카카오)</option><option>멀티채널 (SMS+푸시)</option>
+          </select>
+        </div>
+        <div class="ff">
+          <label class="fl">상태</label>
+          <select id="f-status"><option>계획</option><option>준비중</option><option>진행중</option><option>완료</option></select>
+        </div>
+        <div class="ff"><label class="fl">담당자</label><input id="f-owner" type="text" placeholder="예) 홍길동"></div>
+        <div class="ff"><label class="fl">시작일</label><input id="f-start" type="date"></div>
+        <div class="ff"><label class="fl">종료일</label><input id="f-end" type="date"></div>
+        <div class="ff full"><label class="fl">목표 KPI</label><input id="f-kpi" type="text" placeholder="예) 오픈율 25%, 전환율 3%, ROAS 300%"></div>
+        <div class="ff full">
+          <label class="fl">액션 아이템</label>
+          <textarea id="f-action" placeholder="1. 대상자 추출 (D-7)&#10;2. 메시지 소재 작성 (D-5)&#10;3. A/B 테스트 설계 (D-3)&#10;4. 발송 (D-Day)&#10;5. 성과 분석 (D+3)"></textarea>
+        </div>
+      </div>
+      <div class="modal-sec">결과 입력</div>
+      <div class="form-grid">
+        <div class="ff"><label class="fl">발송 수</label><input id="f-sent" type="number" placeholder="0"></div>
+        <div class="ff"><label class="fl">오픈율 (%)</label><input id="f-open" type="number" placeholder="0.0" step="0.1"></div>
+        <div class="ff"><label class="fl">클릭율 (%)</label><input id="f-click" type="number" placeholder="0.0" step="0.1"></div>
+        <div class="ff"><label class="fl">전환 수</label><input id="f-conv" type="number" placeholder="0"></div>
+        <div class="ff"><label class="fl">매출 기여 (원)</label><input id="f-rev" type="number" placeholder="0"></div>
+        <div class="ff"><label class="fl">수신거부 수</label><input id="f-unsub" type="number" placeholder="0"></div>
+        <div class="ff full">
+          <label class="fl">인사이트 &amp; 다음 액션</label>
+          <textarea id="f-insight" placeholder="VIP 고객 응답율이 예상 대비 30% 높음. 다음 캠페인에서 VIP 전용 콘텐츠 분리 운영 검토."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="del-btn" id="del-btn" onclick="deleteItem()" style="visibility:hidden">삭제</button>
+      <div style="display:flex">
+        <button class="cancel-btn" onclick="closeModal()">취소</button>
+        <button class="save-btn" onclick="saveItem()">저장</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+// ================================================================
+// 🔥 FIREBASE 설정
+// Firebase Console → 프로젝트 설정 → 내 앱 → SDK 설정 및 구성
+// 아래 YOUR_* 값을 Firebase 콘솔에서 복사한 값으로 교체하세요.
+// ================================================================
+import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, doc, getDocs, setDoc, deleteDoc }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey:            "YOUR_API_KEY",
+  authDomain:        "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId:         "YOUR_PROJECT_ID",
+  storageBucket:     "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId:             "YOUR_APP_ID"
+};
+
+// Firebase 설정이 채워져 있으면 Firestore 사용, 아니면 localStorage 자동 폴백
+let db = null, useFirebase = false;
+try {
+  if (firebaseConfig.apiKey !== "YOUR_API_KEY") {
+    db = getFirestore(initializeApp(firebaseConfig));
+    useFirebase = true;
+  }
+} catch(e) { console.warn("Firebase init failed, using localStorage:", e); }
+
+// ── 스토리지 헬퍼 ──────────────────────────────────────────────
+async function dbLoad() {
+  if (useFirebase) {
+    const snap = await getDocs(collection(db, "crm_items"));
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  }
+  try { return JSON.parse(localStorage.getItem('crm_items') || '[]'); } catch { return []; }
+}
+async function dbSave(it) {
+  if (useFirebase) { await setDoc(doc(db, "crm_items", it.id), it); return; }
+  const all = await dbLoad();
+  const idx = all.findIndex(i => i.id === it.id);
+  if (idx >= 0) all[idx] = it; else all.push(it);
+  localStorage.setItem('crm_items', JSON.stringify(all));
+}
+async function dbDelete(id) {
+  if (useFirebase) { await deleteDoc(doc(db, "crm_items", id)); return; }
+  const all = await dbLoad();
+  localStorage.setItem('crm_items', JSON.stringify(all.filter(i => i.id !== id)));
+}
+
+// ── 상수 ──────────────────────────────────────────────────────
+const STATUS_MAP = { 계획:'badge-plan', 준비중:'badge-ready', 진행중:'badge-live', 완료:'badge-done' };
+const EV_MAP = { 계획:'ev-purple', 준비중:'ev-amber', 진행중:'ev-green', 완료:'ev-teal' };
+const CH_ICON = {
+  이메일:'✉️', 카카오톡:'💬', SMS:'📱', '앱 푸시':'🔔', '카카오 친구톡':'💛',
+  '멀티채널 (이메일+카카오)':'🔀', '멀티채널 (SMS+푸시)':'📲'
+};
+const SEG_ICON = {
+  'VIP 고객':'👑', '이탈 위험 고객':'⚠️', '신규 고객':'🌱',
+  '휴면 고객 (90일+)':'💤', '재구매 유도':'🔁', '생애주기 전환':'📈', '전체 고객':'🌐'
+};
+const KNOWN_SEGS = Object.keys(SEG_ICON);
+
+// ── 앱 상태 ────────────────────────────────────────────────────
+let items = [], currentDate = new Date(), currentView = 'calendar', currentFilter = 'all', editId = null;
+
+// ── 유틸 ──────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const loading = on => { $('loading-overlay').style.display = on ? 'flex' : 'none'; };
+
+// 해당 월에 걸치는 아이템만 반환 (통계/사이드바 월별 필터링 핵심)
+function monthItems(y, m) {
+  const ms = `${y}-${String(m+1).padStart(2,'0')}-01`;
+  const me = `${y}-${String(m+1).padStart(2,'0')}-${String(new Date(y,m+1,0).getDate()).padStart(2,'0')}`;
+  return items.filter(it => {
+    if (!it.start) return false;
+    const e = it.end || it.start;
+    return it.start <= me && e >= ms;
+  });
+}
+
+// ── 초기화 ────────────────────────────────────────────────────
+async function init() {
+  loading(true);
+  items = await dbLoad();
+  loading(false);
+  const badge = $('db-badge');
+  badge.textContent = useFirebase ? '🔥 Firebase' : '💾 로컬 저장';
+  badge.title = useFirebase ? 'Firestore에 저장됩니다' : 'localStorage 사용 중 (Firebase 미설정)';
+  refresh();
+}
+
+// ── 통계: 현재 뷰 기준 월 데이터만 표시 ──────────────────────
+function updateStats() {
+  const y = currentDate.getFullYear(), m = currentDate.getMonth();
+  const mi = monthItems(y, m);
+  const done  = mi.filter(i => i.status === '완료');
+  const live  = mi.filter(i => i.status === '진행중').length;
+  const plan  = mi.filter(i => i.status === '계획').length;
+  const sent  = done.reduce((s,i) => s + (Number(i.sent)||0), 0);
+  const avgO  = done.length ? (done.reduce((s,i)=>s+(Number(i.open)||0),0)/done.length).toFixed(1) : null;
+  const conv  = done.reduce((s,i)=>s+(Number(i.conv)||0),0);
+  $('stats-row').innerHTML = `
+    <div class="stat-card"><div class="stat-label">전체 캠페인</div><div class="stat-value">${mi.length}</div><div class="stat-sub">완료 ${done.length}개</div></div>
+    <div class="stat-card"><div class="stat-label">진행중</div><div class="stat-value">${live}</div><div class="stat-sub">계획 ${plan}개 대기</div></div>
+    <div class="stat-card"><div class="stat-label">총 발송</div><div class="stat-value">${sent>=10000?(sent/10000).toFixed(1)+'만':sent.toLocaleString()}</div><div class="stat-sub">건</div></div>
+    <div class="stat-card"><div class="stat-label">평균 오픈율</div><div class="stat-value">${avgO!==null?avgO+'%':'-'}</div><div class="stat-sub">완료 캠페인 기준</div></div>
+    <div class="stat-card"><div class="stat-label">총 전환</div><div class="stat-value">${conv.toLocaleString()}</div><div class="stat-sub">건</div></div>`;
+}
+
+function updateMonthLabel() {
+  const y = currentDate.getFullYear(), m = currentDate.getMonth();
+  $('month-label').textContent = `${y}년 ${m+1}월`;
+  $('sidebar-month').textContent = `${m+1}월 현황`;
+}
+
+function updateSidebar() {
+  const y = currentDate.getFullYear(), m = currentDate.getMonth();
+  const mi = monthItems(y, m);
+  $('sb-total').textContent = mi.length;
+  $('sb-live').textContent  = mi.filter(i=>i.status==='진행중').length;
+  $('sb-done').textContent  = mi.filter(i=>i.status==='완료').length;
+}
+
+// ── 캘린더 렌더 ──────────────────────────────────────────────
+function renderCalendar() {
+  const y = currentDate.getFullYear(), m = currentDate.getMonth();
+  const first = new Date(y,m,1), last = new Date(y,m+1,0), today = new Date();
+  const startDay = first.getDay();
+  let html = '';
+
+  function cell(day, other, ds) {
+    const isToday = !other && today.getFullYear()===y && today.getMonth()===m && today.getDate()===day;
+    const dow = new Date(y,m,day).getDay();
+    const cls = ['cal-cell', other?'other-month':'', isToday?'today':'',
+      !other&&dow===0?'sun':'', !other&&dow===6?'sat':''].filter(Boolean).join(' ');
+    let pills = '';
+    if (!other && ds) {
+      const di = items.filter(it => it.start && (it.end||it.start)>=ds && it.start<=ds);
+      di.slice(0,2).forEach(it => {
+        pills += `<div class="event-bar ${EV_MAP[it.status]||'ev-purple'}" onclick="event.stopPropagation();_edit('${it.id}')" title="${it.name}">${it.name}</div>`;
+      });
+      if (di.length>2) pills += `<div class="more-label">+${di.length-2}개 더</div>`;
+    }
+    const click = !other&&ds ? `_openDate('${ds}')` : 'void(0)';
+    html += `<div class="${cls}" onclick="${click}"><div class="day-num">${day}</div>${pills}</div>`;
+  }
+
+  for (let i=0; i<startDay; i++) cell(new Date(y,m,1-startDay+i).getDate(), true);
+  for (let d=1; d<=last.getDate(); d++) {
+    cell(d, false, `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`);
+  }
+  const rem = (7-((startDay+last.getDate())%7))%7;
+  for (let i=1; i<=rem; i++) cell(i, true);
+  $('cal-grid').innerHTML = html;
+}
+
+// ── 목록 렌더 ────────────────────────────────────────────────
+function renderList() {
+  const list = (currentFilter==='all'?items:items.filter(i=>i.status===currentFilter))
+    .sort((a,b)=>(a.start||'')>(b.start||'')?1:-1);
+  if (!list.length) {
+    $('list-container').innerHTML='<div class="empty"><div class="empty-icon">📭</div>실행안이 없습니다. 추가해보세요!</div>';
+    return;
+  }
+  $('list-container').innerHTML = list.map(it=>`
+    <div class="item-row" onclick="_edit('${it.id}')">
+      <div class="item-top">
+        <div class="item-name">${it.name}</div>
+        <span class="status-badge ${STATUS_MAP[it.status]||'badge-plan'}">${it.status}</span>
+      </div>
+      <div class="item-meta">
+        ${it.segment?`<span class="meta-chip"><span class="meta-icon">${SEG_ICON[it.segment]||'🎯'}</span>${it.segment}</span>`:''}
+        ${it.channel?`<span class="meta-chip"><span class="meta-icon">${CH_ICON[it.channel]||'📨'}</span>${it.channel}</span>`:''}
+        ${it.start?`<span class="meta-chip"><span class="meta-icon">📅</span>${it.start} ~ ${it.end||'?'}</span>`:''}
+        ${it.owner?`<span class="meta-chip"><span class="meta-icon">👤</span>${it.owner}</span>`:''}
+      </div>
+      ${it.kpi?`<div style="font-size:11px;color:var(--text3);margin-top:6px">🎯 ${it.kpi}</div>`:''}
+    </div>`).join('');
+}
+
+// ── 결과 렌더 ────────────────────────────────────────────────
+function renderResult() {
+  const done = items.filter(i=>i.status==='완료');
+  const sent = done.reduce((s,i)=>s+(Number(i.sent)||0),0);
+  const conv = done.reduce((s,i)=>s+(Number(i.conv)||0),0);
+  const avgO = done.length?(done.reduce((s,i)=>s+(Number(i.open)||0),0)/done.length).toFixed(1):null;
+  $('result-summary').innerHTML = `
+    <div class="stat-card"><div class="stat-label">완료 캠페인</div><div class="stat-value">${done.length}</div></div>
+    <div class="stat-card"><div class="stat-label">총 발송</div><div class="stat-value">${sent.toLocaleString()}</div></div>
+    <div class="stat-card"><div class="stat-label">평균 오픈율</div><div class="stat-value">${avgO!==null?avgO+'%':'-'}</div></div>
+    <div class="stat-card"><div class="stat-label">총 전환</div><div class="stat-value">${conv.toLocaleString()}</div></div>`;
+  if (!done.length) { $('result-cards').innerHTML='<div class="empty"><div class="empty-icon">📊</div>완료된 캠페인이 없습니다.</div>'; return; }
+  $('result-cards').innerHTML = done.map(it=>`
+    <div class="result-card">
+      <div class="result-card-top">
+        <div class="result-card-name">${it.name}</div>
+        <span style="font-size:11px;color:var(--text3)">${it.start||''} ~ ${it.end||''}</span>
+      </div>
+      <div class="result-metrics">
+        ${it.sent?`<div class="metric-cell"><div class="metric-label">발송</div><div class="metric-val">${Number(it.sent).toLocaleString()}</div></div>`:''}
+        ${it.open?`<div class="metric-cell"><div class="metric-label">오픈율</div><div class="metric-val">${it.open}%</div></div>`:''}
+        ${it.click?`<div class="metric-cell"><div class="metric-label">클릭율</div><div class="metric-val">${it.click}%</div></div>`:''}
+        ${it.conv?`<div class="metric-cell"><div class="metric-label">전환</div><div class="metric-val">${Number(it.conv).toLocaleString()}</div></div>`:''}
+        ${it.rev?`<div class="metric-cell"><div class="metric-label">매출기여</div><div class="metric-val">${(Number(it.rev)/10000).toFixed(0)}만</div></div>`:''}
+      </div>
+      ${it.insight?`<div class="insight-box">💡 ${it.insight}</div>`:''}
+    </div>`).join('');
+}
+
+function refresh() {
+  updateMonthLabel(); updateStats(); updateSidebar(); renderCalendar();
+  if (currentView==='list') renderList();
+  if (currentView==='result') renderResult();
+}
+
+// ── 전역 노출 (onclick 핸들러용) ─────────────────────────────
+window.changeMonth = d => { currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth()+d, 1); refresh(); };
+window.goToday = () => { currentDate = new Date(); refresh(); };
+
+window.switchNav = (el, view) => {
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+  currentView = view;
+  $('page-title').textContent = {calendar:'캘린더',list:'실행안 목록',result:'결과 & 인사이트'}[view];
+  $('view-calendar').style.display = view==='calendar'?'block':'none';
+  $('view-list').style.display     = view==='list'    ?'block':'none';
+  $('view-result').style.display   = view==='result'  ?'block':'none';
+  if (view==='list') renderList();
+  if (view==='result') renderResult();
+};
+window.filterNav = status => {
+  currentFilter = status; currentView = 'list';
+  $('view-calendar').style.display='none'; $('view-list').style.display='block'; $('view-result').style.display='none';
+  $('page-title').textContent='실행안 목록';
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.toggle('active',c.textContent.includes(status)));
+  renderList();
+};
+window.setFilter = (f,el) => {
+  currentFilter = f;
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active'); renderList();
+};
+
+window.toggleSegCustom = val => {
+  const el = $('f-seg-custom');
+  el.style.display = val==='__custom__'?'block':'none';
+  if (val!=='__custom__') el.value='';
+};
+
+window.openModal = dateStr => {
+  editId = null;
+  $('modal-title-text').textContent='실행안 추가';
+  $('del-btn').style.visibility='hidden';
+  ['name','ch','owner','kpi','action','sent','open','click','conv','rev','unsub','insight']
+    .forEach(f=>{ const e=$('f-'+f); if(e) e.value=''; });
+  $('f-status').value='계획';
+  $('f-seg').value=''; $('f-seg-custom').style.display='none'; $('f-seg-custom').value='';
+  const t = dateStr || new Date().toISOString().slice(0,10);
+  $('f-start').value=t; $('f-end').value=t;
+  $('modal-overlay').classList.add('open');
+};
+window._openDate = d => { if(d) window.openModal(d); };
+window.closeModal = () => $('modal-overlay').classList.remove('open');
+
+window._edit = id => {
+  const it = items.find(i=>i.id===id); if(!it) return;
+  editId = id;
+  $('modal-title-text').textContent='실행안 수정';
+  $('del-btn').style.visibility='visible';
+  const isCustom = it.segment && !KNOWN_SEGS.includes(it.segment);
+  $('f-seg').value = isCustom?'__custom__':(it.segment||'');
+  $('f-seg-custom').style.display = isCustom?'block':'none';
+  $('f-seg-custom').value = isCustom?(it.segment||''):'';
+  [['name','name'],['ch','channel'],['status','status'],['owner','owner'],['kpi','kpi'],
+   ['action','action'],['start','start'],['end','end'],['sent','sent'],['open','open'],
+   ['click','click'],['conv','conv'],['rev','rev'],['unsub','unsub'],['insight','insight']
+  ].forEach(([f,k])=>{ const e=$('f-'+f); if(e) e.value=it[k]||''; });
+  $('modal-overlay').classList.add('open');
+};
+
+window.deleteItem = async () => {
+  if (!editId||!confirm('이 실행안을 삭제하시겠습니까?')) return;
+  loading(true);
+  await dbDelete(editId);
+  items = items.filter(i=>i.id!==editId);
+  loading(false); window.closeModal(); refresh();
+};
+
+window.saveItem = async () => {
+  const name = $('f-name').value.trim();
+  if (!name) { alert('캠페인명을 입력해주세요'); return; }
+  let segment = $('f-seg').value;
+  if (segment==='__custom__') {
+    segment = $('f-seg-custom').value.trim();
+    if (!segment) { alert('세그먼트를 직접 입력해주세요'); return; }
+  }
+  const it = {
+    id: editId||String(Date.now()), name, segment,
+    channel:$('f-ch').value, status:$('f-status').value, owner:$('f-owner').value,
+    start:$('f-start').value, end:$('f-end').value, kpi:$('f-kpi').value,
+    action:$('f-action').value, sent:$('f-sent').value, open:$('f-open').value,
+    click:$('f-click').value, conv:$('f-conv').value, rev:$('f-rev').value,
+    unsub:$('f-unsub').value, insight:$('f-insight').value
+  };
+  loading(true);
+  await dbSave(it);
+  if (editId) { const idx=items.findIndex(i=>i.id===editId); if(idx>=0) items[idx]=it; else items.push(it); }
+  else items.push(it);
+  loading(false); window.closeModal(); refresh();
+};
+
+$('modal-overlay').addEventListener('click', e => { if(e.target.id==='modal-overlay') window.closeModal(); });
+
+init();
+</script>
+</body>
+</html>
