@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CRM 실행안 대시보드</title>
+<title>CRM - Calendar</title>
 <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -335,13 +336,13 @@ import { getFirestore, collection, doc, getDocs, setDoc, deleteDoc }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCW55iwKi_gmDMGWlHb9XAvHXtqkoiUotw",
-    authDomain: "crm-calendar-214c7.firebaseapp.com",
-    projectId: "crm-calendar-214c7",
-    storageBucket: "crm-calendar-214c7.firebasestorage.app",
-    messagingSenderId: "459953117729",
-    appId: "1:459953117729:web:950b2276c1a9f51b482160"
-  };
+  apiKey: "AIzaSyCW55iwKi_gmDMGWlHb9XAvHXtqkoiUotw",
+  authDomain: "crm-calendar-214c7.firebaseapp.com",
+  projectId: "crm-calendar-214c7",
+  storageBucket: "crm-calendar-214c7.firebasestorage.app",
+  messagingSenderId: "459953117729",
+  appId: "1:459953117729:web:950b2276c1a9f51b482160"
+};
 
 // Firebase 설정이 채워져 있으면 Firestore 사용, 아니면 localStorage 자동 폴백
 let db = null, useFirebase = false;
@@ -412,6 +413,18 @@ async function init() {
   const badge = $('db-badge');
   badge.textContent = useFirebase ? '🔥 Firebase' : '💾 로컬 저장';
   badge.title = useFirebase ? 'Firestore에 저장됩니다' : 'localStorage 사용 중 (Firebase 미설정)';
+
+  // 마지막으로 저장된 실행안의 시작일 기준 월로 캘린더 이동
+  if (items.length > 0) {
+    const withDate = items.filter(i => i.start).sort((a, b) => b.id > a.id ? 1 : -1);
+    if (withDate.length > 0) {
+      const lastDate = new Date(withDate[0].start + 'T00:00:00');
+      if (!isNaN(lastDate)) {
+        currentDate = new Date(lastDate.getFullYear(), lastDate.getMonth(), 1);
+      }
+    }
+  }
+
   refresh();
 }
 
