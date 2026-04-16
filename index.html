@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CRM - Calendar</title>
+<title>CRM 실행안 대시보드</title>
 <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -129,27 +129,80 @@ body{font-family:'Pretendard','Noto Sans KR',sans-serif;background:var(--bg);col
 .insight-box{background:var(--surface2);border-radius:var(--radius-sm);padding:10px 12px;margin-top:10px;font-size:12px;color:var(--text2);line-height:1.6;border-left:3px solid var(--purple)}
 
 /* ── MODAL ── */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;align-items:center;justify-content:center;padding:20px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;align-items:center;justify-content:center;padding:16px}
 .modal-overlay.open{display:flex}
-.modal{background:var(--surface);border-radius:var(--radius);width:100%;max-width:580px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
-.modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surface);z-index:1}
+/* 3열 모달 컨테이너: 실행안정보 | 소재입력 | 미리보기 */
+.modal-wrap{display:flex;width:100%;max-width:1160px;max-height:94vh;border-radius:var(--radius);overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.22)}
+/* 왼쪽: 실행안 정보 (고정) */
+.modal{background:var(--surface);width:460px;flex-shrink:0;display:flex;flex-direction:column;max-height:94vh}
+.modal-header{padding:16px 20px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--surface)}
 .modal-title{font-size:15px;font-weight:700}
 .modal-close{width:28px;height:28px;border:none;background:var(--bg);border-radius:6px;cursor:pointer;font-size:16px;color:var(--text2);display:flex;align-items:center;justify-content:center}
-.modal-body{padding:20px 24px}
-.modal-sec{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin:16px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.modal-body{padding:16px 20px;overflow-y:auto;flex:1}
+.modal-sec{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin:13px 0 7px;padding-bottom:5px;border-bottom:1px solid var(--border)}
 .modal-sec:first-child{margin-top:0}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.ff{display:flex;flex-direction:column;gap:5px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.ff{display:flex;flex-direction:column;gap:4px}
 .ff.full{grid-column:1/-1}
 .fl{font-size:11px;font-weight:600;color:var(--text2)}
-.ff input,.ff select,.ff textarea{padding:8px 10px;border:1px solid var(--border2);border-radius:var(--radius-sm);font-size:13px;font-family:inherit;color:var(--text);background:var(--surface);outline:none;transition:border-color .15s}
+.ff input,.ff select,.ff textarea{padding:6px 9px;border:1px solid var(--border2);border-radius:var(--radius-sm);font-size:12px;font-family:inherit;color:var(--text);background:var(--surface);outline:none;transition:border-color .15s}
 .ff input:focus,.ff select:focus,.ff textarea:focus{border-color:var(--accent)}
-.ff textarea{resize:vertical;min-height:72px;line-height:1.5}
-.modal-footer{padding:14px 24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;background:var(--surface)}
-.del-btn{padding:7px 14px;border:1px solid #FFCDD2;background:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;color:var(--coral);cursor:pointer}
+.ff textarea{resize:vertical;min-height:60px;line-height:1.5}
+.modal-footer{padding:11px 20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;background:var(--surface)}
+.del-btn{padding:6px 13px;border:1px solid #FFCDD2;background:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;color:var(--coral);cursor:pointer}
 .del-btn:hover{background:var(--coral-bg)}
-.save-btn{padding:8px 20px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer}
-.cancel-btn{padding:8px 14px;border:1px solid var(--border2);background:none;border-radius:var(--radius-sm);font-size:13px;color:var(--text2);cursor:pointer;margin-right:8px}
+.save-btn{padding:7px 18px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer}
+.cancel-btn{padding:7px 13px;border:1px solid var(--border2);background:none;border-radius:var(--radius-sm);font-size:13px;color:var(--text2);cursor:pointer;margin-right:7px}
+
+/* 가운데: 소재 입력 */
+.creative-panel{width:360px;flex-shrink:0;background:var(--surface2);border-left:1px solid var(--border);display:flex;flex-direction:column;max-height:94vh}
+.creative-panel-header{padding:14px 16px 11px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.creative-panel-title{font-size:13px;font-weight:700}
+.creative-panel-body{flex:1;overflow-y:auto;padding:12px}
+
+/* 소재 카드 (입력부) */
+.creative-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px;overflow:hidden}
+.creative-card-head{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.creative-card-del{width:20px;height:20px;border:none;background:none;cursor:pointer;color:var(--text3);font-size:13px;border-radius:4px;display:flex;align-items:center;justify-content:center}
+.creative-card-del:hover{background:var(--coral-bg);color:var(--coral)}
+.creative-card-body{padding:10px 12px;display:flex;flex-direction:column;gap:7px}
+.c-label{font-size:10px;font-weight:600;color:var(--text2)}
+.c-input{padding:6px 8px;border:1px solid var(--border2);border-radius:6px;font-size:12px;font-family:inherit;color:var(--text);background:var(--surface);outline:none;width:100%}
+.c-input:focus{border-color:var(--accent)}
+.c-textarea{padding:6px 8px;border:1px solid var(--border2);border-radius:6px;font-size:12px;font-family:inherit;color:var(--text);background:var(--surface);outline:none;width:100%;resize:vertical;min-height:72px;line-height:1.6}
+.c-textarea:focus{border-color:var(--accent)}
+
+/* 이미지 업로드 — 작고 심플한 버튼형 */
+.img-upload-btn{display:flex;align-items:center;gap:6px;padding:6px 10px;border:1px dashed var(--border2);border-radius:6px;background:var(--bg);cursor:pointer;font-size:11px;font-weight:600;color:var(--text2);transition:all .15s;width:100%}
+.img-upload-btn:hover{border-color:var(--accent);color:var(--accent)}
+.img-upload-btn.has-img{border-style:solid;border-color:var(--teal);color:var(--teal);background:var(--teal-bg)}
+.img-filename{font-size:10px;color:var(--text3);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.add-creative-btn{width:100%;padding:8px;border:1.5px dashed var(--border2);border-radius:var(--radius-sm);background:none;cursor:pointer;font-size:12px;font-weight:600;color:var(--text2);transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
+.add-creative-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--purple-bg)}
+
+/* 오른쪽: 미리보기 패널 */
+.preview-panel{width:340px;flex-shrink:0;background:#B2C7D9;border-left:1px solid var(--border);display:flex;flex-direction:column;max-height:94vh}
+.preview-panel-header{padding:14px 16px 11px;border-bottom:1px solid rgba(0,0,0,.1);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:rgba(0,0,0,.08)}
+.preview-panel-title{font-size:12px;font-weight:700;color:#1A3A4A}
+/* 소재 탭 */
+.preview-tabs{display:flex;gap:4px;padding:10px 12px 0;flex-shrink:0}
+.preview-tab{padding:5px 10px;border-radius:6px 6px 0 0;font-size:11px;font-weight:600;cursor:pointer;color:#1A3A4A;opacity:.55;background:rgba(255,255,255,.3);border:none;transition:all .15s}
+.preview-tab.active{opacity:1;background:rgba(255,255,255,.85);color:#1A1916}
+.preview-body{flex:1;overflow-y:auto;padding:12px 14px}
+/* 카카오 채팅 UI */
+.kakao-chat-wrap{display:flex;align-items:flex-start;gap:8px}
+.kakao-avatar{width:34px;height:34px;border-radius:50%;background:#FFD700;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px}
+.kakao-chat-right{flex:1;min-width:0}
+.kakao-sender{font-size:10px;font-weight:700;color:#1A1A1A;margin-bottom:5px}
+.kakao-bubble{background:#fff;border-radius:0 12px 12px 12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+/* 이미지: 원본 비율 그대로 */
+.kakao-bubble-img{width:100%;height:auto;display:none;object-fit:contain}
+.kakao-bubble-img.show{display:block}
+.kakao-bubble-body{padding:10px 12px}
+.kakao-bubble-text{font-size:11.5px;color:#222;line-height:1.65;white-space:pre-wrap;word-break:break-all}
+.kakao-bubble-divider{height:1px;background:#EEE;margin:0 12px}
+.kakao-bubble-cta{display:block;padding:9px 12px;text-align:center;font-size:12px;font-weight:700;color:#3A6EA5;cursor:pointer;background:none;border:none;width:100%}
 
 .empty{text-align:center;padding:48px 20px;color:var(--text3);font-size:13px}
 .empty-icon{font-size:32px;margin-bottom:8px}
@@ -255,73 +308,92 @@ body{font-family:'Pretendard','Noto Sans KR',sans-serif;background:var(--bg);col
 
 <!-- MODAL -->
 <div class="modal-overlay" id="modal-overlay">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title" id="modal-title-text">실행안 추가</div>
-      <button class="modal-close" onclick="closeModal()">&#10005;</button>
-    </div>
-    <div class="modal-body">
-      <div class="modal-sec">기본 정보</div>
-      <div class="form-grid">
-        <div class="ff full"><label class="fl">캠페인명 *</label><input id="f-name" type="text" placeholder="예) 이탈 고객 윈백 캠페인 5월"></div>
-        <div class="ff">
-          <label class="fl">세그먼트</label>
-          <select id="f-seg" onchange="toggleSegCustom(this.value)">
-            <option value="">선택하세요</option>
-            <option>VIP 고객</option>
-            <option>이탈 위험 고객</option>
-            <option>신규 고객</option>
-            <option>휴면 고객 (90일+)</option>
-            <option>재구매 유도</option>
-            <option>생애주기 전환</option>
-            <option>전체 고객</option>
-            <option value="__custom__">직접 입력</option>
-          </select>
-          <input id="f-seg-custom" type="text" placeholder="세그먼트명 직접 입력" style="display:none;margin-top:6px">
+  <div class="modal-wrap">
+
+    <!-- 왼쪽: 실행안 정보 -->
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-title-text">실행안 추가</div>
+        <button class="modal-close" onclick="closeModal()">&#10005;</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-sec">기본 정보</div>
+        <div class="form-grid">
+          <div class="ff full"><label class="fl">캠페인명 *</label><input id="f-name" type="text" placeholder="예) 이탈 고객 윈백 캠페인 5월"></div>
+          <div class="ff">
+            <label class="fl">세그먼트</label>
+            <select id="f-seg" onchange="toggleSegCustom(this.value)">
+              <option value="">선택하세요</option>
+              <option>VIP 고객</option><option>이탈 위험 고객</option><option>신규 고객</option>
+              <option>휴면 고객 (90일+)</option><option>재구매 유도</option>
+              <option>생애주기 전환</option><option>전체 고객</option>
+              <option value="__custom__">직접 입력</option>
+            </select>
+            <input id="f-seg-custom" type="text" placeholder="세그먼트명 직접 입력" style="display:none;margin-top:6px">
+          </div>
+          <div class="ff">
+            <label class="fl">채널</label>
+            <select id="f-ch">
+              <option value="">선택하세요</option>
+              <option>이메일</option><option>카카오톡</option><option>SMS</option>
+              <option>앱 푸시</option><option>카카오 친구톡</option>
+              <option>멀티채널 (이메일+카카오)</option><option>멀티채널 (SMS+푸시)</option>
+            </select>
+          </div>
+          <div class="ff">
+            <label class="fl">상태</label>
+            <select id="f-status"><option>계획</option><option>준비중</option><option>진행중</option><option>완료</option></select>
+          </div>
+          <div class="ff"><label class="fl">담당자</label><input id="f-owner" type="text" placeholder="예) 홍길동"></div>
+          <div class="ff"><label class="fl">시작일</label><input id="f-start" type="date"></div>
+          <div class="ff"><label class="fl">종료일</label><input id="f-end" type="date"></div>
+          <div class="ff full"><label class="fl">목표 KPI</label><input id="f-kpi" type="text" placeholder="예) 오픈율 25%, 전환율 3%, ROAS 300%"></div>
+          <div class="ff full">
+            <label class="fl">액션 아이템</label>
+            <textarea id="f-action" placeholder="1. 대상자 추출 (D-7)&#10;2. 메시지 소재 작성 (D-5)&#10;3. A/B 테스트 설계 (D-3)&#10;4. 발송 (D-Day)&#10;5. 성과 분석 (D+3)"></textarea>
+          </div>
         </div>
-        <div class="ff">
-          <label class="fl">채널</label>
-          <select id="f-ch">
-            <option value="">선택하세요</option>
-            <option>이메일</option><option>카카오톡</option><option>SMS</option>
-            <option>앱 푸시</option><option>카카오 친구톡</option>
-            <option>멀티채널 (이메일+카카오)</option><option>멀티채널 (SMS+푸시)</option>
-          </select>
-        </div>
-        <div class="ff">
-          <label class="fl">상태</label>
-          <select id="f-status"><option>계획</option><option>준비중</option><option>진행중</option><option>완료</option></select>
-        </div>
-        <div class="ff"><label class="fl">담당자</label><input id="f-owner" type="text" placeholder="예) 홍길동"></div>
-        <div class="ff"><label class="fl">시작일</label><input id="f-start" type="date"></div>
-        <div class="ff"><label class="fl">종료일</label><input id="f-end" type="date"></div>
-        <div class="ff full"><label class="fl">목표 KPI</label><input id="f-kpi" type="text" placeholder="예) 오픈율 25%, 전환율 3%, ROAS 300%"></div>
-        <div class="ff full">
-          <label class="fl">액션 아이템</label>
-          <textarea id="f-action" placeholder="1. 대상자 추출 (D-7)&#10;2. 메시지 소재 작성 (D-5)&#10;3. A/B 테스트 설계 (D-3)&#10;4. 발송 (D-Day)&#10;5. 성과 분석 (D+3)"></textarea>
+        <div class="modal-sec">결과 입력</div>
+        <div class="form-grid">
+          <div class="ff"><label class="fl">발송 수</label><input id="f-sent" type="number" placeholder="0"></div>
+          <div class="ff"><label class="fl">오픈율 (%)</label><input id="f-open" type="number" placeholder="0.0" step="0.1"></div>
+          <div class="ff"><label class="fl">클릭율 (%)</label><input id="f-click" type="number" placeholder="0.0" step="0.1"></div>
+          <div class="ff"><label class="fl">전환 수</label><input id="f-conv" type="number" placeholder="0"></div>
+          <div class="ff"><label class="fl">매출 기여 (원)</label><input id="f-rev" type="number" placeholder="0"></div>
+          <div class="ff"><label class="fl">수신거부 수</label><input id="f-unsub" type="number" placeholder="0"></div>
+          <div class="ff full">
+            <label class="fl">인사이트 &amp; 다음 액션</label>
+            <textarea id="f-insight" placeholder="VIP 고객 응답율이 예상 대비 30% 높음. 다음 캠페인에서 VIP 전용 콘텐츠 분리 운영 검토."></textarea>
+          </div>
         </div>
       </div>
-      <div class="modal-sec">결과 입력</div>
-      <div class="form-grid">
-        <div class="ff"><label class="fl">발송 수</label><input id="f-sent" type="number" placeholder="0"></div>
-        <div class="ff"><label class="fl">오픈율 (%)</label><input id="f-open" type="number" placeholder="0.0" step="0.1"></div>
-        <div class="ff"><label class="fl">클릭율 (%)</label><input id="f-click" type="number" placeholder="0.0" step="0.1"></div>
-        <div class="ff"><label class="fl">전환 수</label><input id="f-conv" type="number" placeholder="0"></div>
-        <div class="ff"><label class="fl">매출 기여 (원)</label><input id="f-rev" type="number" placeholder="0"></div>
-        <div class="ff"><label class="fl">수신거부 수</label><input id="f-unsub" type="number" placeholder="0"></div>
-        <div class="ff full">
-          <label class="fl">인사이트 &amp; 다음 액션</label>
-          <textarea id="f-insight" placeholder="VIP 고객 응답율이 예상 대비 30% 높음. 다음 캠페인에서 VIP 전용 콘텐츠 분리 운영 검토."></textarea>
+      <div class="modal-footer">
+        <button class="del-btn" id="del-btn" onclick="deleteItem()" style="visibility:hidden">삭제</button>
+        <div style="display:flex">
+          <button class="cancel-btn" onclick="closeModal()">취소</button>
+          <button class="save-btn" onclick="saveItem()">저장</button>
         </div>
       </div>
     </div>
-    <div class="modal-footer">
-      <button class="del-btn" id="del-btn" onclick="deleteItem()" style="visibility:hidden">삭제</button>
-      <div style="display:flex">
-        <button class="cancel-btn" onclick="closeModal()">취소</button>
-        <button class="save-btn" onclick="saveItem()">저장</button>
+
+    <!-- 가운데: 소재 입력 -->
+    <div class="creative-panel">
+      <div class="creative-panel-header">
+        <div class="creative-panel-title">📎 발송 소재</div>
+        <button class="add-creative-btn" style="width:auto;padding:4px 10px;font-size:11px" onclick="addCreative()">＋ 소재 추가</button>
       </div>
+      <div class="creative-panel-body" id="creative-list"></div>
     </div>
+
+    <!-- 오른쪽: 카카오톡 미리보기 -->
+    <div class="preview-panel">
+      <div class="preview-panel-header">
+        <span class="preview-panel-title">📱 카카오톡 미리보기</span>
+      </div>
+      <div class="preview-tabs" id="preview-tabs"></div>
+      <div class="preview-body" id="preview-body"></div>
+    </div>
+
   </div>
 </div>
 
@@ -596,6 +668,9 @@ window.openModal = dateStr => {
   $('f-seg').value=''; $('f-seg-custom').style.display='none'; $('f-seg-custom').value='';
   const t = dateStr || new Date().toISOString().slice(0,10);
   $('f-start').value=t; $('f-end').value=t;
+  // 소재 초기화 (기본 2개)
+  creatives = [newCreative(1), newCreative(2)];
+  renderCreatives();
   $('modal-overlay').classList.add('open');
 };
 window._openDate = d => { if(d) window.openModal(d); };
@@ -614,6 +689,11 @@ window._edit = id => {
    ['action','action'],['start','start'],['end','end'],['sent','sent'],['open','open'],
    ['click','click'],['conv','conv'],['rev','rev'],['unsub','unsub'],['insight','insight']
   ].forEach(([f,k])=>{ const e=$('f-'+f); if(e) e.value=it[k]||''; });
+  // 소재 불러오기 (없으면 기본 2개)
+  creatives = (it.creatives && it.creatives.length > 0)
+    ? it.creatives.map(c => ({...c}))
+    : [newCreative(1), newCreative(2)];
+  renderCreatives();
   $('modal-overlay').classList.add('open');
 };
 
@@ -639,7 +719,8 @@ window.saveItem = async () => {
     start:$('f-start').value, end:$('f-end').value, kpi:$('f-kpi').value,
     action:$('f-action').value, sent:$('f-sent').value, open:$('f-open').value,
     click:$('f-click').value, conv:$('f-conv').value, rev:$('f-rev').value,
-    unsub:$('f-unsub').value, insight:$('f-insight').value
+    unsub:$('f-unsub').value, insight:$('f-insight').value,
+    creatives: creatives.map(c => ({ id:c.id, name:c.name, text:c.text, cta:c.cta, imgName:c.imgName, imgData:'' }))
   };
   loading(true);
   await dbSave(it);
@@ -647,6 +728,160 @@ window.saveItem = async () => {
   else items.push(it);
   loading(false); window.closeModal(); refresh();
 };
+
+// ── 소재(Creative) 관리 ──────────────────────────────────────
+let creatives = [];
+let activePreviewIdx = 0; // 현재 미리보기 중인 소재 인덱스
+
+function newCreative(idx) {
+  return { id: 'c' + Date.now() + idx, name: `소재 ${idx}`, text: '', imgData: '', imgName: '', cta: '' };
+}
+
+// 소재 입력 카드 렌더링 (가운데 패널)
+function renderCreatives() {
+  const container = $('creative-list');
+  if (!container) return;
+  let html = '';
+  creatives.forEach((c, i) => {
+    html += `
+    <div class="creative-card" id="cc-${c.id}">
+      <div class="creative-card-head">
+        <input class="c-input" value="${escHtml(c.name)}"
+          oninput="updateCreativeName('${c.id}',this.value)"
+          style="border:none;background:none;font-size:12px;font-weight:700;color:var(--text);padding:0;width:calc(100% - 28px)">
+        ${creatives.length > 1 ? `<button class="creative-card-del" onclick="removeCreative('${c.id}')">✕</button>` : '<div style="width:20px"></div>'}
+      </div>
+      <div class="creative-card-body">
+
+        <div class="c-label">이미지</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div class="img-upload-btn ${c.imgData?'has-img':''}" onclick="triggerImgUpload('${c.id}')">
+            <span>${c.imgData ? '✅' : '🖼'}</span>
+            <span>${c.imgData ? '이미지 변경' : '이미지 업로드'}</span>
+          </div>
+          ${c.imgData ? `<button onclick="removeImg('${c.id}')" style="padding:5px 8px;border:1px solid #FFCDD2;border-radius:6px;background:none;font-size:11px;color:var(--coral);cursor:pointer">제거</button>` : ''}
+        </div>
+        ${c.imgName ? `<div class="img-filename">${escHtml(c.imgName)}</div>` : ''}
+        <input type="file" id="img-input-${c.id}" accept="image/*" style="display:none" onchange="handleImgUpload('${c.id}',this)">
+
+        <div class="c-label" style="margin-top:2px">내용</div>
+        <textarea class="c-textarea" rows="5"
+          oninput="updateCreativeText('${c.id}',this.value)"
+          placeholder="예) 당뇨케어 해물가득영양밥&#10;부담 없이 한 끼부터 시작해보세요 :)&#10;&#10;✅ 처음이라 더 가볍게 시작&#10;✅ 간편하지만 균형 잡힌 식사">${escHtml(c.text)}</textarea>
+
+        <div class="c-label">버튼 텍스트 (CTA)</div>
+        <input class="c-input" value="${escHtml(c.cta)}"
+          oninput="updateCreativeCta('${c.id}',this.value)"
+          placeholder="예) 한 끼 식사 경험하기 🎁">
+
+        <button onclick="setActivePreview(${i})"
+          style="padding:5px 10px;border:1px solid var(--border2);border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;background:${activePreviewIdx===i?'var(--accent)':'none'};color:${activePreviewIdx===i?'#fff':'var(--text2)'};transition:all .15s">
+          ${activePreviewIdx===i ? '👁 미리보기 중' : '미리보기 보기'}
+        </button>
+
+      </div>
+    </div>`;
+  });
+  html += `<button class="add-creative-btn" onclick="addCreative()">＋ 소재 추가 (최대 5개)</button>`;
+  container.innerHTML = html;
+  renderPreview();
+}
+
+// 미리보기 탭 + 본문 렌더링 (오른쪽 패널) — 항상 선택된 소재 표시
+function renderPreview() {
+  const tabs = $('preview-tabs');
+  const body = $('preview-body');
+  if (!tabs || !body) return;
+
+  // 탭
+  tabs.innerHTML = creatives.map((c, i) =>
+    `<button class="preview-tab ${i===activePreviewIdx?'active':''}" onclick="setActivePreview(${i})">${escHtml(c.name)}</button>`
+  ).join('');
+
+  // 현재 소재
+  const c = creatives[activePreviewIdx];
+  if (!c) { body.innerHTML = ''; return; }
+
+  body.innerHTML = `
+    <div class="kakao-chat-wrap">
+      <div class="kakao-avatar">🏪</div>
+      <div class="kakao-chat-right">
+        <div class="kakao-sender">메디쏠라디쏠라</div>
+        <div class="kakao-bubble">
+          <img id="prev-img-${c.id}"
+            class="kakao-bubble-img${c.imgData?' show':''}"
+            src="${c.imgData||''}" alt=""
+            style="width:100%;height:auto;display:${c.imgData?'block':'none'};object-fit:contain">
+          <div class="kakao-bubble-body">
+            <div class="kakao-bubble-text" id="prev-text-${c.id}">${escHtml(c.text)||'<span style="color:#bbb;font-style:italic">내용을 입력하면 여기 표시됩니다.</span>'}</div>
+          </div>
+          ${c.cta ? `<div class="kakao-bubble-divider"></div><button class="kakao-bubble-cta" id="prev-cta-${c.id}">${escHtml(c.cta)}</button>` : ''}
+        </div>
+      </div>
+    </div>`;
+}
+
+window.setActivePreview = idx => { activePreviewIdx = idx; renderCreatives(); };
+
+window.addCreative = () => {
+  if (creatives.length >= 5) { alert('소재는 최대 5개까지 추가할 수 있습니다.'); return; }
+  creatives.push(newCreative(creatives.length + 1));
+  activePreviewIdx = creatives.length - 1;
+  renderCreatives();
+};
+window.removeCreative = id => {
+  creatives = creatives.filter(c => c.id !== id);
+  if (activePreviewIdx >= creatives.length) activePreviewIdx = creatives.length - 1;
+  renderCreatives();
+};
+window.updateCreativeName = (id, val) => {
+  const c = creatives.find(c=>c.id===id); if(!c) return;
+  c.name = val;
+  // 탭만 업데이트
+  const tabs = $('preview-tabs');
+  if (tabs) tabs.innerHTML = creatives.map((cr,i)=>
+    `<button class="preview-tab ${i===activePreviewIdx?'active':''}" onclick="setActivePreview(${i})">${escHtml(cr.name)}</button>`
+  ).join('');
+};
+window.updateCreativeText = (id, val) => {
+  const c = creatives.find(c=>c.id===id); if(!c) return;
+  c.text = val;
+  // 미리보기만 실시간 업데이트 (소재 카드 리렌더 없이)
+  if (creatives.indexOf(c) === activePreviewIdx) {
+    const el = $('prev-text-' + id);
+    if (el) el.innerHTML = val ? escHtml(val) : '<span style="color:#bbb;font-style:italic">내용을 입력하면 여기 표시됩니다.</span>';
+  }
+};
+window.updateCreativeCta = (id, val) => {
+  const c = creatives.find(c=>c.id===id); if(!c) return;
+  c.cta = val;
+  if (creatives.indexOf(c) === activePreviewIdx) {
+    renderPreview(); // CTA는 버블 구조 변경이라 재렌더
+  }
+};
+window.triggerImgUpload = id => { const el = $('img-input-' + id); if(el) el.click(); };
+window.removeImg = id => {
+  const c = creatives.find(c=>c.id===id); if(!c) return;
+  c.imgData = ''; c.imgName = '';
+  renderCreatives();
+};
+window.handleImgUpload = (id, input) => {
+  const file = input.files[0]; if(!file) return;
+  if (file.size > 5 * 1024 * 1024) { alert('5MB 이하 이미지만 업로드할 수 있습니다.'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    const c = creatives.find(c=>c.id===id); if(!c) return;
+    c.imgData = e.target.result;
+    c.imgName = file.name;
+    renderCreatives();
+  };
+  reader.readAsDataURL(file);
+};
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
 $('modal-overlay').addEventListener('click', e => { if(e.target.id==='modal-overlay') window.closeModal(); });
 
