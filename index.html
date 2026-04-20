@@ -78,7 +78,7 @@ body{font-family:'Pretendard','Noto Sans KR',sans-serif;background:var(--bg);col
 .cal-head-cell:first-child{color:var(--coral)}
 .cal-head-cell:last-child{color:var(--blue)}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
-.cal-cell{border-right:1px solid var(--border);border-bottom:1px solid var(--border);min-height:110px;padding:8px;cursor:pointer;transition:background .1s;vertical-align:top}
+.cal-cell{border-right:1px solid var(--border);border-bottom:1px solid var(--border);min-height:130px;padding:8px;cursor:pointer;transition:background .1s;vertical-align:top}
 .cal-cell:nth-child(7n){border-right:none}
 .cal-cell:hover{background:var(--surface2)}
 .cal-cell.other-month{background:var(--bg);opacity:.6}
@@ -336,7 +336,7 @@ body{font-family:'Pretendard','Noto Sans KR',sans-serif;background:var(--bg);col
             <select id="f-ch">
               <option value="">선택하세요</option>
               <option>이메일</option><option>카카오톡</option><option>SMS</option>
-              <option>앱 푸시</option><option>카카오 친구톡</option>
+              <option>앱 푸시</option><option>온사이트</option><option>카카오 친구톡</option>
               <option>멀티채널 (이메일+카카오)</option><option>멀티채널 (SMS+푸시)</option>
             </select>
           </div>
@@ -450,7 +450,7 @@ async function dbDelete(id) {
 const STATUS_MAP = { 계획:'badge-plan', 준비중:'badge-ready', 진행중:'badge-live', 완료:'badge-done' };
 const EV_MAP = { 계획:'ev-purple', 준비중:'ev-amber', 진행중:'ev-green', 완료:'ev-teal' };
 const CH_ICON = {
-  이메일:'✉️', 카카오톡:'💬', SMS:'📱', '앱 푸시':'🔔', '카카오 친구톡':'💛',
+  이메일:'✉️', 카카오톡:'💬', SMS:'📱', '앱 푸시':'🔔', '온사이트':'🖥', '카카오 친구톡':'💛',
   '멀티채널 (이메일+카카오)':'🔀', '멀티채널 (SMS+푸시)':'📲'
 };
 const SEG_ICON = {
@@ -547,10 +547,10 @@ function renderCalendar() {
     let pills = '';
     if (!other && ds) {
       const di = items.filter(it => it.start && (it.end||it.start)>=ds && it.start<=ds);
-      di.slice(0,2).forEach(it => {
+      di.slice(0,4).forEach(it => {
         pills += `<div class="event-bar ${EV_MAP[it.status]||'ev-purple'}" onclick="event.stopPropagation();_edit('${it.id}')" title="${it.name}">${it.name}</div>`;
       });
-      if (di.length>2) pills += `<div class="more-label">+${di.length-2}개 더</div>`;
+      if (di.length>4) pills += `<div class="more-label">+${di.length-4}개 더</div>`;
     }
     const click = !other&&ds ? `_openDate('${ds}')` : 'void(0)';
     html += `<div class="${cls}" onclick="${click}"><div class="day-num">${day}</div>${pills}</div>`;
